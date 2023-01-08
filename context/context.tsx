@@ -11,7 +11,7 @@ const authContextDefaultValues: contextType = {
 export const Mode_data = createContext<contextType>(authContextDefaultValues);;
 
 function Context({ children }: any) {
-    const [darkMode, seDarkMode] = useState<boolean>(true);
+    const [darkMode, seDarkMode] = useState<boolean>(false);
   
     return (
       <Mode_data.Provider value={{ darkMode, seDarkMode }}>
