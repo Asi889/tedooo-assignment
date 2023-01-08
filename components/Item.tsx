@@ -18,7 +18,7 @@ const Item = ({ item, doImpression }: ItemProps) => {
   const [isLiked, setIsLiked] = useState(false);
   const elementRef = useRef(null);
   const isInViewPort = useIsInViewPort(elementRef);
-  const { darkMode, seDarkMode } = useContext(Mode_data);
+  const { darkMode } = useContext(Mode_data);
 
   useEffect(() => {
     if (isInViewPort) {

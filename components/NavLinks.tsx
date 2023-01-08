@@ -7,7 +7,7 @@ import { useContext } from "react";
 
 function NavLinks(props: any) {
     const {buttons, isOpen} = props;
-    const { darkMode, seDarkMode } = useContext(Mode_data);
+    const { darkMode } = useContext(Mode_data);
 
     return (
         <>

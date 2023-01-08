@@ -17,9 +17,8 @@ const NavBar = () => {
     { img: "", tagName: "Notification" },
   ];
 
-  const { darkMode, seDarkMode } = useContext(Mode_data);
+  const { darkMode } = useContext(Mode_data);
  
-  let gg = "you";
   return (
     <div className={`w-screen h-20 transition duration-300 ${darkMode ? "bg-[#8a8b8d]" : "bg-white"} flex justify-between fixed inset-0`}>
       <div className="flex pl-1 items-center">

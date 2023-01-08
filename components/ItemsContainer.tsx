@@ -6,6 +6,8 @@ import { ITEM_PER_FEED } from "../src/utils/consts";
 import { sleep } from "../src/utils/utils";
 import Item from "./Item";
 import Loader from "./Loader";
+import { Mode_data } from "../context/context";
+import { useContext } from "react";
 
 type Props = {
   items: ItemType[] | any;
@@ -16,8 +18,18 @@ const ItemsContainer: React.FC<Props> = (props) => {
   const amount = useRef(ITEM_PER_FEED);
   const [tempItems, setTempItems] = useState(items.slice(0, amount.current));
   const [loading, setLoading] = useState(false);
+  const [atBottom, setAtBottom] = useState(false);
+  const { darkMode } = useContext(Mode_data);
 
   const fetchMoreItems = async () => {
+    console.log();
+    
+    if(tempItems.length  === items.length ){
+      console.log("at bottom");
+      
+      setAtBottom(true)
+      return
+    }
     setLoading(true);
     await sleep(1000);
     amount.current = amount.current + ITEM_PER_FEED;
@@ -69,6 +81,7 @@ const ItemsContainer: React.FC<Props> = (props) => {
           );
         })}
       </ul>
+      {atBottom && <h1 className={`text-xl ${darkMode ? "text-white" : "text-[#666363]"} text-center mt-6 `}>No more blogs... </h1>}
       {loading && <Loader />}
     </main>
   );
