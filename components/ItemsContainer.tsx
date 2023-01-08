@@ -1,31 +1,23 @@
 /* eslint-disable @next/next/no-img-element */
-import React, {
-  createRef,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import Item from "./Item";
+import React, { useEffect, useRef, useState } from "react";
+import { useIsBottomOfPage } from "../src/hooks/useIsBottomOfPage";
 import { ItemType } from "../src/Types";
-import { isInViewport, sleep } from "../src/utils/utils";
 import { ITEM_PER_FEED } from "../src/utils/consts";
-import { useIsInViewPort } from "../src/hooks/isInViewPorto";
+import { sleep } from "../src/utils/utils";
+import Item from "./Item";
+import Loader from "./Loader";
+
 type Props = {
   items: ItemType[] | any;
 };
 
-const ItemsContainerNew: React.FC<Props> = (props) => {
+const ItemsContainer: React.FC<Props> = (props) => {
   const { items } = props;
   const amount = useRef(ITEM_PER_FEED);
   const [tempItems, setTempItems] = useState(items.slice(0, amount.current));
   const [loading, setLoading] = useState(false);
-  const [visitedElements, setVisitedElements] = useState([]);
-  const [hasMore, setHasMore] = useState(false);
-  const observer = useRef<HTMLDivElement[] | any>([]);
-  observer.current = tempItems.map((el: Element, i: number) => observer.current[i] ?? createRef());
-  
-  const fetcMoreItems = async () => {
+
+  const fetchMoreItems = async () => {
     setLoading(true);
     await sleep(1000);
     amount.current = amount.current + ITEM_PER_FEED;
@@ -33,57 +25,53 @@ const ItemsContainerNew: React.FC<Props> = (props) => {
     setLoading(false);
   };
 
-  const handleScroll = () => {
-    const bottom = Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight;
-    // checkInView()
-    if (bottom) {
-      fetcMoreItems();
-      console.log("at the bottom");
+  const { isBottomOfPage } = useIsBottomOfPage();
+  useEffect(() => {
+    if (isBottomOfPage && !loading) {
+      fetchMoreItems();
+    }
+    
+  }, [isBottomOfPage]);
+
+  const mutateImpression = (id: string) => {
+    const userId = "MY_USER_ID";
+    // console.log(`logging in logging`, id);
+    try {
+      // axios.get(`https://www.tedooo.com/?userId=${userId}&itemId=${id}`);
+    } catch (error) {
+      console.warn(`error in logging`, id);
     }
   };
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
+  const [itemImpressions, setItemImpressions] = useState<string[]>([]);
+  
+  const doImpression = (id: string) => {
+    if (!itemImpressions.includes(id)) {
+      const newImpressions = [...itemImpressions, id];
+      setItemImpressions(newImpressions);
+      mutateImpression(id);
+    }
+  };
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
-  const checkInView = ()=>{
-        observer.current.map((el: any)=>{
-            // console.log(useIsInViewPort(el));
-            
-        })
-  }
   return (
-    <div className="grid gri gap-y-10 pt-10">
-      {tempItems?.map((item: any, index: number) => {
-        return (
-          <div
-            key={item.id}
-            className={`item item-${item.id}`}
-            data-item-id={item.id}
-          >
-            <Item ref={observer.current[index]} item={item} />
-          </div>
-        );
-      })}
-      {loading ? (
-        <img
-          className="justify-self-center w-20 h-20"
-          src="https://media.tenor.com/wpSo-8CrXqUAAAAi/loading-loading-forever.gif"
-          alt=""
-        />
-      ) : (
-        ""
-      )}
-    </div>
+    <main className="pb-6 mx-auto transition duration-700">
+      <ul className="flex flex-col gap-y-10 pt-10 mx-auto px-4 max-w-[970px]">
+        {tempItems?.map((item: any) => {
+          return (
+            <li
+              key={item.id}
+              className={`item mx-auto w-full item-${item.id}`}
+              data-item-id={item.id}
+            >
+              <Item item={item} doImpression={doImpression} />
+            </li>
+          );
+        })}
+      </ul>
+      {loading && <Loader />}
+    </main>
   );
 };
 
-
-
-export default ItemsContainerNew;
+export default ItemsContainer;

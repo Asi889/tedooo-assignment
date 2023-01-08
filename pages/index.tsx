@@ -1,24 +1,21 @@
 import axios from "axios";
-import type { GetServerSidePropsContext, NextPage } from "next";
-import { useEffect, useState } from "react";
+import type { GetServerSidePropsContext } from "next";
 import ItemsContainer from "../components/ItemsContainer";
 import NavBar from "../components/NavBar";
 import { ItemType } from "../src/Types";
+import { Mode_data } from "../context/context";
+import { useContext } from "react";
 
 type Props = {
-  allItems:  ItemType[];
+  allItems: ItemType[];
 };
-const Home: React.FC<Props> = (props) => {
-  const { allItems } = props;
-  const [items,setItems]= useState([...allItems])
-  // console.log(items);
-  
+const Home: React.FC<Props> = ({ allItems }) => {
+  const { darkMode, seDarkMode } = useContext(Mode_data);
 
   return (
-    <div className={`mt-20  bg-[#F6F7F7]`}>
+    <div className={`transition-colors duration-300 ease-in mt-20 ${darkMode? "bg-[#2f3a3a]" : "bg-[#F6F7F7]"}  `}>
       <NavBar />
-      <ItemsContainer items={items} />
-      
+      <ItemsContainer items={allItems} />
     </div>
   );
 };
@@ -26,16 +23,8 @@ const Home: React.FC<Props> = (props) => {
 export default Home;
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  // try {
-  const { data } = await axios.get(`https://dev.tedooo.com/feed.json`, {
-    params: { _limit: 6 },
-  });
-  // items = JSON.parse(data)
-  // console.log(items);
-  // } catch (error) {
+  const { data } = await axios.get(`https://dev.tedooo.com/feed.json`);
 
-  // }
-  // const itmes
   return {
     props: {
       allItems: data.data,

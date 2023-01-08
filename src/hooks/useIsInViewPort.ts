@@ -1,13 +1,16 @@
-import { isClient, isInViewport } from "../utils/utils";
-import React, { useMemo, useRef, useState } from "react";
-import { useEffect } from "react";
+import { isClient } from "./../utils/utils";
+import React, { useEffect } from "react";
 
-export const useIsInViewPort = (ref:any) => {
+export const useIsInViewPort = (ref: any) => {
   const [isIntersecting, setIntersecting] = React.useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) =>
+    if (!isClient() || !ref) {
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) =>{    
       setIntersecting(entry.isIntersecting)
+    }
     );
 
     observer.observe(ref.current);

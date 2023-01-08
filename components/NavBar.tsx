@@ -1,10 +1,13 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
-import ChatIcon from "./svgs/ChatIcon";
-import HomeIcon from "./svgs/HomeIcon";
-import NotificationIcon from "./svgs/NotificationIcon";
-
+import { Rotate as Hamburger } from "hamburger-react";
+import NavLinks from "./NavLinks";
+import { Mode_data } from "../context/context";
+import { useContext } from "react";
+import Switch from "./svgs/Switch";
 const NavBar = () => {
   const [input, setInput] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const navbarButtons = [
     {
       img: "",
@@ -14,38 +17,49 @@ const NavBar = () => {
     { img: "", tagName: "Notification" },
   ];
 
-  const [iconColor, setIconColor] = useState(false)
-
+  const { darkMode, seDarkMode } = useContext(Mode_data);
+ 
   let gg = "you";
   return (
-    <div className="w-screen h-20 bg-white flex justify-between fixed inset-0">
+    <div className={`w-screen h-20 transition duration-300 ${darkMode ? "bg-[#8a8b8d]" : "bg-white"} flex justify-between fixed inset-0`}>
       <div className="flex pl-1 items-center">
-        <div className="w-12 h-12 bg-[#57b686]"></div>
+        <img
+          className="w-full h-12"
+          src="https://is2-ssl.mzstatic.com/image/thumb/Purple122/v4/6e/71/6a/6e716a96-99c1-bb66-4a7a-b66f7886975d/AppIcon-0-0-1x_U007emarketing-0-10-0-0-85-220.png/1200x600wa.png"
+          alt=""
+        />
         <input
           type="text"
-          
           placeholder="input"
-          className="rounded-full bg-gray-200 h-10"
+          className={`rounded-full  ${darkMode ? "bg-[#F4F5F5]" : "bg-[#F4F5F5]"} h-10 pl-4 ml-2 lg:w-auto w-[100px]`}
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
       </div>
-      <div  className="flex items-center pr-20 gap-x-6">
-        {navbarButtons.map((btn) => {
-          return (
-            <a
-              href="#"
-              key={btn.tagName}
-              
-              className="flex flex-row-reverse nav-tag text-gray-600 h-full items-center hover:text-[#3de4c0] hover:border-b-4 hover:border-[#3de4c0] transition-all  ease-in"
-            >
-              {/* <div className="w-8 h-8 bg-[#eb8888]"></div> */}
-              <h3 className="text-2xl tag-name flex h-full items-center ">{btn.tagName}</h3>
-              {btn.tagName === "Home"? <HomeIcon /> : btn.tagName === "Messaging" ? <ChatIcon /> : <NotificationIcon />}
-            </a>
-          );
-        })}
-        <div className="rounded-full bg-gray-500 w-12 h-12 self-center "></div>
+      <div className="flex  pr-[25px] relative items-center">
+        <Switch /> 
+        <div className="hidden lg:flex  items-center px-4 gap-x-6">
+          <NavLinks buttons={navbarButtons} isOpen={isOpen} />
+        </div>
+
+        <div className="flex lg:hidden  transition duration-700 items-center relative ">
+          <Hamburger toggled={isOpen} onToggle={() => setIsOpen(!isOpen)} />
+          <div
+            className={`  ${
+              !isOpen ? "h-0 hidden" : "grid h-auto"
+            } absolute md:-left-[160px] -left-[70px] top-12 md:top-[40px] transition-all duration-700 items-center gap-y-4  ${darkMode ? "bg-[#666566]" : "bg-[#f0eff5]"} p-2 rounded-lg`}
+          >
+            <NavLinks buttons={navbarButtons} isOpen={isOpen} />
+          </div>
+        </div>
+
+        <div className="rounded-full bg-gray-500 w-12 h-12 self-center ">
+          <img
+            className="rounded-full h-12 w-12 border-2 border-[#949796] "
+            src="https://res.cloudinary.com/dvdzjj8jo/image/upload/v1639907803/Asaf_up6v4r.png"
+            alt=""
+          />
+        </div>
       </div>
     </div>
   );
